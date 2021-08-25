@@ -29,7 +29,7 @@ public class CfqToGraphConverter {
     private static String PREFIX = "http://ns/";
 
     public static void main(String[] args) throws IOException {
-        // "/Users/koller/Downloads/data/mcd1/train/train_decode.txt"
+        int numLines = countLines(args[0]);
         BufferedReader r = new BufferedReader(new FileReader(args[0]));
         String line = null;
         int instanceNumber = 1;
@@ -37,7 +37,7 @@ public class CfqToGraphConverter {
         OutputCodec<SGraph> ocGraph = new SgraphAmrOutputCodec();
         OutputCodec<SGraph> ocGraphviz = new MyGraphvizOutputCodec();
 
-        try (ProgressBar pb = new ProgressBar("Converting CFQ corpus", 95743)) {
+        try (ProgressBar pb = new ProgressBar("Converting CFQ corpus", numLines)) {
             while ((line = r.readLine()) != null) {
                 pb.step();
                 String s = "PREFIX ns: <" + PREFIX + "> " + line.strip(); //ad pseudo prefix to cope with freebase constants
@@ -169,4 +169,11 @@ public class CfqToGraphConverter {
         }
     }
 
+    private static int countLines(String filename) throws IOException {
+        int lines = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            while (reader.readLine() != null) lines++;
+        }
+        return lines;
+    }
 }
